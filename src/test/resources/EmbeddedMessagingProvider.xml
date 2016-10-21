@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component-configuration
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://tis.co.jp/nablarch/component-configuration"
+    xsi:schemaLocation="http://tis.co.jp/nablarch/component-configuration  /component-configuration.xsd">
+
+  <component name="messagingProvider"
+      class="com.nablarch.example.sample.mom.EmbeddedMessagingProvider">
+    <property name="url"  value="tcp://localhost:61616" />
+    <!-- キュー定義 -->
+    <property name="queueNames">
+      <list>
+        <!-- サービス側にある要求受信キューの論理名 -->
+        <value>TEST.REQUEST</value>
+        <value>TEST.RESPONSE</value>
+      </list>
+    </property>
+  </component>
+
+</component-configuration>
