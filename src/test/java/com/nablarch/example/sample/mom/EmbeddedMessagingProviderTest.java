@@ -36,8 +36,6 @@ public class EmbeddedMessagingProviderTest {
         try{
             embeddedMessagingProvider = SystemRepository.get("messagingProvider");
             embeddedMessagingProvider.initialize();
-            //2回初期化が実行されても問題ないことを確認するために、2回初期化を実行してみる。
-            embeddedMessagingProvider.initialize();
 
             //プロバイダ初期化の成功確認のために、コンテキストを取得してみる。
             MessagingContext context = embeddedMessagingProvider.createContext();

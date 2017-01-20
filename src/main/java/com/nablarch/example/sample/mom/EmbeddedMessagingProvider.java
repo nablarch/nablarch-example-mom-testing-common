@@ -22,16 +22,17 @@ import nablarch.fw.messaging.provider.JmsMessagingProvider;
  * </p>
  * @author Nabu Rakutaro
  */
+@SuppressWarnings({"ProhibitedExceptionThrown", "unpublishedApi"})
 public class EmbeddedMessagingProvider extends JmsMessagingProvider implements Initializable {
-    /** キューマネージャ。*/
-    private BrokerService broker;
 
-    /**キューのリスト(親クラスから簡単に取り出す方法がないため、本クラスでも保持する)*/
-    private List<ActiveMQQueue> queueList;
+    /** キューマネージャ */
+    private BrokerService broker = new BrokerService();
+
+    /** キューのリスト(親クラスから簡単に取り出す方法がないため、本クラスでも保持する) */
+    private List<ActiveMQQueue> queueList = new ArrayList<>();
 
     /** アプリケーションが接続するためのURI */
     private String url = "tcp://localhost:61616";
-
 
     /**
      * 初期化処理を行う。
@@ -41,20 +42,16 @@ public class EmbeddedMessagingProvider extends JmsMessagingProvider implements I
      */
     @Override
     public void initialize() {
-        synchronized (EmbeddedMessagingProvider.class) {
-            if (broker == null) {
-                try {
-                    broker = new BrokerService();
-                    broker.setPersistent(false);
-                    broker.setUseJmx(false);
-                    broker.addConnector(url);
-                } catch (Exception e) {
-                    //BrokerService#addConnectorがExceptionを送出する可能性があるため、Exceptionを指定してcatchしている
-                    throw new RuntimeException("an Error occurred while launch the messaging broker", e);
-                }
-                startServer();
-            }
+        try {
+            broker.setPersistent(false);
+            broker.setUseJmx(false);
+            broker.addConnector(url);
+        } catch (Exception e) {
+            // BrokerService#addConnectorがExceptionを送出する可能性があるため、Exceptionを指定してcatchしている
+            throw new RuntimeException("an Error occurred while launch the messaging broker", e);
         }
+        startServer();
+
         broker.setDestinations(queueList.toArray(new ActiveMQQueue[queueList.size()]));
         setConnectionFactory(new ActiveMQConnectionFactory(url));
     }
@@ -67,7 +64,7 @@ public class EmbeddedMessagingProvider extends JmsMessagingProvider implements I
             broker.start();
             broker.waitUntilStarted();
         } catch (Exception e) {
-            //BrokerService#startがExceptionを送出する可能性があるため、Exceptionを指定してcatchしている
+            // BrokerService#startがExceptionを送出する可能性があるため、Exceptionを指定してcatchしている
             stopServer();
             throw new RuntimeException(e);
         }
@@ -94,12 +91,11 @@ public class EmbeddedMessagingProvider extends JmsMessagingProvider implements I
      */
     public void setQueueNames(List<String> names) {
         Map<String, Queue> queueMap = new HashMap<>();
-        queueList = new ArrayList<ActiveMQQueue>();
-        for (String queueName : names) {
-            ActiveMQQueue activeMQQueue = new ActiveMQQueue(queueName);
+        names.forEach(name -> {
+            ActiveMQQueue activeMQQueue = new ActiveMQQueue(name);
             queueList.add(activeMQQueue);
-            queueMap.put(queueName, activeMQQueue);
-        }
+            queueMap.put(name, activeMQQueue);
+        });
         setDestinations(queueMap);
     }
 
