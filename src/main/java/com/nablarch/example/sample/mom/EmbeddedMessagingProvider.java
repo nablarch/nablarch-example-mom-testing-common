@@ -26,10 +26,10 @@ import nablarch.fw.messaging.provider.JmsMessagingProvider;
 public class EmbeddedMessagingProvider extends JmsMessagingProvider implements Initializable {
 
     /** キューマネージャ */
-    private BrokerService broker = new BrokerService();
+    private BrokerService broker;
 
     /** キューのリスト(親クラスから簡単に取り出す方法がないため、本クラスでも保持する) */
-    private List<ActiveMQQueue> queueList = new ArrayList<>();
+    private final List<ActiveMQQueue> queueList = new ArrayList<>();
 
     /** アプリケーションが接続するためのURI */
     private String url = "tcp://localhost:61616";
@@ -43,6 +43,7 @@ public class EmbeddedMessagingProvider extends JmsMessagingProvider implements I
     @Override
     public void initialize() {
         try {
+            broker = new BrokerService();
             broker.setPersistent(false);
             broker.setUseJmx(false);
             broker.addConnector(url);
