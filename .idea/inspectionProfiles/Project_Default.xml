@@ -792,7 +792,6 @@
       <option name="ignoreSerializable" value="false" />
       <option name="ignoreCloneable" value="false" />
     </inspection_tool>
-    <inspection_tool class="RedundantSuppression" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="RedundantThrowsDeclaration" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ReplaceAssignmentWithOperatorAssignment" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreLazyOperators" value="true" />
@@ -1019,7 +1018,7 @@
     <inspection_tool class="unpublishedApi" enabled="true" level="ERROR" enabled_by_default="true">
       <option name="tagsString" value="architect" />
     </inspection_tool>
-    <inspection_tool class="unused" enabled="true" level="WARNING" enabled_by_default="true" klass="packageLocal" inner_class="protected" field="protected" method="protected" ignoreAccessors="true" isSelected="true">
+    <inspection_tool class="unused" enabled="true" level="WARNING" enabled_by_default="true" klass="packageLocal" inner_class="protected" field="protected" method="protected" ignoreAccessors="true">
       <option name="LOCAL_VARIABLE" value="true" />
       <option name="FIELD" value="true" />
       <option name="METHOD" value="true" />
