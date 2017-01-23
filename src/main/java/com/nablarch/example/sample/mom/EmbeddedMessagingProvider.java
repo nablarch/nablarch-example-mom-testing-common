@@ -22,7 +22,7 @@ import nablarch.fw.messaging.provider.JmsMessagingProvider;
  * </p>
  * @author Nabu Rakutaro
  */
-@SuppressWarnings({"ProhibitedExceptionThrown", "unpublishedApi"})
+@SuppressWarnings({"blacklistJavaApi", "ProhibitedExceptionThrown"})
 public class EmbeddedMessagingProvider extends JmsMessagingProvider implements Initializable {
 
     /** キューマネージャ */
