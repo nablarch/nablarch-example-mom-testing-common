@@ -12,10 +12,9 @@ cache:
 script:
 - git clone -b master https://github.com/nablarch/nablarch-ci-script.git $HOME/build-script/
   && chmod +x $HOME/build-script/travis-ci/*.sh
-- $HOME/build-script/travis-ci/install-mvn-3.2.5.sh
 - $HOME/build-script/travis-ci/prepare_travis_settings.sh
-- $HOME/build-script/travis-ci/nablarch-mvn-build-nodeploy.sh -p travis,development
-- $HOME/build-script/travis-ci/upload-mvn-test-report.sh
+- $HOME/build-script/travis-ci/build-nablarch.sh -m nodeploy -p development
+- $HOME/build-script/travis-ci/upload-test-report.sh -p dev-deploy
 notifications:
   slack:
     secure: gydLfD4NzQIfNb6Pqqg8RnEgtAozndECI6Din5SqmYO66/SbCtA6F4F2hE/P09jVNJN47T3TvQzlF6aKIsqLtaJ0DhB/q5CyPPS6xF+1E8e5iVEYNcXocUOCbsDIXvTXhvdF9C6NWAmQUZ6QwOsrql2OFQB3KdGo5vUCV/50Rkq8t8LANCniB/Ye471RMfZbUZKyFzIZj0UbBQOriMzNPaPKaMb24WlBi1iIIHxvYE01JWpllEThzg+oWEh4u2CK61QyHhM/q9wMRGXjIbiyarwq5Zx6tmoJJ/1+1d9bGtfYnCAHWWomSTLMbMX3KNSYq5kDA5oyC9zKZz3Sj2AFbt1uxHaKAUxzVboSu+CpbGla02KYCvxcXHviihiWiiCt9aNTjtRfqzoXfZvCW8rrisfH0F0xWezUfBHpqzgR0/0aOVVOV5whkA7T4fHVIY/YMDsxMC5zDraeMldutUXKKWp7/Pq4n+QyjNpcAzFcEdRUP9rhj/jwV+0IgJcTrNel2H0Xm0VPz75fBDsl7CXvWgQukSRkV6fvWNruAXQ65m0Uim4X2zTpQtkryvibVR0onVd36+CDe1/bRSD2fHwpkKLDtJwCEC6Urkayor6UAkGxsZhXLGS1JdWO2uuxcqWclBFbQTZUD4TmeQrWTxoi9NNW9IXn29QnLtDlAXXgAcQ=
