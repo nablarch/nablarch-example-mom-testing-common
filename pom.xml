@@ -99,8 +99,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <!-- 0.7.3以降のJaCoCoではリクエスト単体テストのカバレッジを計測できない。
-          Jenkinsとの連携にはJaCoCoプラグインの1系を使用する(2系はJaCoCo0.7.4以降が必須) -->
+        <version>0.8.0</version>
         <configuration>
           <excludes>
             <exclude>**/com/nablarch/example/app/entity/*</exclude>
@@ -144,6 +143,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.0</version>
       </plugin>
     </plugins>
   </reporting>
