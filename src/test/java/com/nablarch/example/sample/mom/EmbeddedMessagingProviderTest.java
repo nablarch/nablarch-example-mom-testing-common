@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- *  {@link EmbeddedMessagingProviderTest}のテストクラス。
+ * {@link EmbeddedMessagingProviderTest}のテストクラス。
  */
 public class EmbeddedMessagingProviderTest {
 
@@ -24,7 +24,7 @@ public class EmbeddedMessagingProviderTest {
 
     @After
     public void tearDown() throws Exception {
-    	RepositoryInitializer.revertDefaultRepository();
+        RepositoryInitializer.revertDefaultRepository();
     }
 
     /**
@@ -33,16 +33,16 @@ public class EmbeddedMessagingProviderTest {
     @Test
     public void testInitialize() {
         EmbeddedMessagingProvider embeddedMessagingProvider = null;
-        try{
+        try {
             embeddedMessagingProvider = SystemRepository.get("messagingProvider");
             embeddedMessagingProvider.initialize();
 
             //プロバイダ初期化の成功確認のために、コンテキストを取得してみる。
             MessagingContext context = embeddedMessagingProvider.createContext();
             assertNotNull(context);
-        }finally{
-            if(embeddedMessagingProvider != null){
-            	//後続のテストのためにサーバを停止する。
+        } finally {
+            if (embeddedMessagingProvider != null) {
+                //後続のテストのためにサーバを停止する。
                 embeddedMessagingProvider.stopServer();
             }
         }
@@ -50,22 +50,23 @@ public class EmbeddedMessagingProviderTest {
 
     /**
      * 既に使用済みのポートを使用しようとした場合、実行時例外が送出されることを確認する。
+     *
      * @throws Exception
      */
     @Test(expected = RuntimeException.class)
     public void testInitializeUsedPort() throws Exception {
         EmbeddedMessagingProvider embeddedMessagingProvider = null;
         BrokerService broker = new BrokerService();
-        try{
+        try {
             broker.setPersistent(false);
             broker.setUseJmx(false);
             broker.addConnector("tcp://localhost:61616");
             embeddedMessagingProvider = SystemRepository.get("messagingProvider");
             embeddedMessagingProvider.initialize();
-        }finally{
+        } finally {
             broker.stop();
             broker.waitUntilStopped();
-            if(embeddedMessagingProvider != null){
+            if (embeddedMessagingProvider != null) {
                 //後続のテストのためにサーバを停止する。
                 embeddedMessagingProvider.stopServer();
             }

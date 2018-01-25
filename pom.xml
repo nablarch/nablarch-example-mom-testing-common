@@ -2,20 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>com.nablarch.archetype</groupId>
-    <artifactId>nablarch-archetype-parent</artifactId>
-    <version>5u13</version>
-  </parent>
-
   <groupId>com.nablarch.example</groupId>
   <artifactId>nablarch-example-mom-testing-common</artifactId>
   <version>5u13</version>
   <packaging>jar</packaging>
 
   <properties>
-    <!-- ソース及びclassファイルが準拠するJavaのバージョン-->
-    <java.version>1.8</java.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
   <dependencyManagement>
@@ -99,8 +96,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <!-- 0.7.3以降のJaCoCoではリクエスト単体テストのカバレッジを計測できない。
-          Jenkinsとの連携にはJaCoCoプラグインの1系を使用する(2系はJaCoCo0.7.4以降が必須) -->
+        <version>0.8.0</version>
         <configuration>
           <excludes>
             <exclude>**/com/nablarch/example/app/entity/*</exclude>
@@ -144,6 +140,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.0</version>
       </plugin>
     </plugins>
   </reporting>
