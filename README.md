@@ -1,10 +1,6 @@
 nablarch-example-mom-testing-common
 ====================================
 
-| master | develop |
-|:-----------|:------------|
-|[![Build Status](https://travis-ci.org/nablarch/nablarch-example-mom-testing-common.svg?branch=master)](https://travis-ci.org/nablarch/nablarch-example-mom-testing-common)|[![Build Status](https://travis-ci.org/nablarch/nablarch-example-mom-testing-common.svg?branch=develop)](https://travis-ci.org/nablarch/nablarch-example-mom-testing-common)|
-
 Nablarch FrameworkのMOMメッセージングの動作確認用のモジュールです。
 ActiveMQを組み込みモードで起動するためのモジュールが含まれています。
 
