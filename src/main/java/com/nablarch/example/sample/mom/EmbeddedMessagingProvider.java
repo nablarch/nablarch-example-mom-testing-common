@@ -5,11 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.jms.Queue;
+import jakarta.jms.Queue;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
-import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.artemis.api.core.QueueConfiguration;
+import org.apache.activemq.artemis.api.core.RoutingType;
+import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
+import org.apache.activemq.artemis.core.config.CoreAddressConfiguration;
+import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
+import org.apache.activemq.artemis.core.remoting.impl.invm.InVMConnector;
+import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
+import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 
 import nablarch.core.repository.initialization.Initializable;
 import nablarch.fw.messaging.provider.JmsMessagingProvider;
@@ -26,7 +31,7 @@ import nablarch.fw.messaging.provider.JmsMessagingProvider;
 public class EmbeddedMessagingProvider extends JmsMessagingProvider implements Initializable {
 
     /** キューマネージャ */
-    private BrokerService broker;
+    private EmbeddedActiveMQ embedded;
 
     /** キューのリスト(親クラスから簡単に取り出す方法がないため、本クラスでも保持する) */
     private final List<ActiveMQQueue> queueList = new ArrayList<>();
@@ -42,19 +47,40 @@ public class EmbeddedMessagingProvider extends JmsMessagingProvider implements I
      */
     @Override
     public void initialize() {
+        ConfigurationImpl config = new ConfigurationImpl();
         try {
-            broker = new BrokerService();
-            broker.setPersistent(false);
-            broker.setUseJmx(false);
-            broker.addConnector(url);
+            config.addAcceptorConfiguration("tcp", url);
         } catch (Exception e) {
-            // BrokerService#addConnectorがExceptionを送出する可能性があるため、Exceptionを指定してcatchしている
-            throw new RuntimeException("an Error occurred while launch the messaging broker", e);
+            // addAcceptorConfigurationがExceptionを送出する可能性があるため、Exceptionを指定してcatchしている
+            throw new RuntimeException("an Error occurred while launch the EmbeddedActiveMQ", e);
         }
+        config.setSecurityEnabled(false);
+        config.setPersistenceEnabled(false);
+        
+        List<QueueConfiguration> queueConfigs = queueList.stream()
+                .map(ActiveMQQueue::getQueueName)
+                .map(name -> {
+                    QueueConfiguration queueConfig = new QueueConfiguration(name);
+                    queueConfig.setRoutingType(RoutingType.ANYCAST);
+                    return queueConfig;
+                })
+                .toList();
+        config.setQueueConfigs(queueConfigs);
+        CoreAddressConfiguration addressConfig = new CoreAddressConfiguration();
+        addressConfig.setName("address.nablarch-test");
+        addressConfig.setQueueConfigs(queueConfigs);
+        addressConfig.addRoutingType(RoutingType.ANYCAST);
+
+        embedded = new EmbeddedActiveMQ();
+        embedded.setConfiguration(config);
         startServer();
 
-        broker.setDestinations(queueList.toArray(new ActiveMQQueue[queueList.size()]));
-        setConnectionFactory(new ActiveMQConnectionFactory(url));
+        try {
+            setConnectionFactory(ActiveMQJMSClient.createConnectionFactory(url, "nablarch-test"));
+        } catch (Exception e) {
+            // createConnectionFactoryがExceptionを送出する可能性があるため、Exceptionを指定してcatchしている
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -62,10 +88,9 @@ public class EmbeddedMessagingProvider extends JmsMessagingProvider implements I
      */
     protected void startServer() {
         try {
-            broker.start();
-            broker.waitUntilStarted();
+            embedded.start();
         } catch (Exception e) {
-            // BrokerService#startがExceptionを送出する可能性があるため、Exceptionを指定してcatchしている
+            // startがExceptionを送出する可能性があるため、Exceptionを指定してcatchしている
             stopServer();
             throw new RuntimeException(e);
         }
@@ -76,11 +101,12 @@ public class EmbeddedMessagingProvider extends JmsMessagingProvider implements I
      */
     protected void stopServer() {
         try {
-            broker.stop();
-            broker.waitUntilStopped();
-            broker = null;
+            embedded.stop();
+            // このメソッドを呼ばないと、非デーモンスレッドのスレッドプールが残り続けてVMの停止が非常に遅くなる
+            InVMConnector.resetThreadPool();
+            embedded = null;
         } catch (Exception e) {
-            //BrokerService#stopがExceptionを送出する可能性があるため、Exceptionを指定してcatchしている
+            // stopがExceptionを送出する可能性があるため、Exceptionを指定してcatchしている
             throw new RuntimeException(e);
         }
     }
